@@ -1,4 +1,4 @@
-package com.mr_faton.FrameParts;
+package com.mr_faton.panel;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -20,6 +20,7 @@ public final class CenterPanel {
         }
         return centerPanel;
     }
+
     public CenterPanel() {
         columnNames = new String[]{"Название", "Заголовок", "Срок"};
         model = new DefaultTableModel(0, columnNames.length);
@@ -49,7 +50,7 @@ public final class CenterPanel {
     }
 
     public String getSelectedMap() {
-        if (table.getSelectedRow() < 0){
+        if (table.getSelectedRow() < 0) {
             System.out.println("строка не выбрана");
             return "";
         } else {

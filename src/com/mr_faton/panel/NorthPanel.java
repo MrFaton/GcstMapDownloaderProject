@@ -1,4 +1,4 @@
-package com.mr_faton.FrameParts;
+package com.mr_faton.panel;
 
 import com.mr_faton.Satements.Variables;
 
@@ -53,7 +53,7 @@ public final class NorthPanel {
         shortMapHeaderCombo.setEditable(true);
 
         //создаём выпадающий список с вариантами глубины поиска
-        deepSearch = new String[] {
+        deepSearch = new String[]{
                 "1 сутки", "2 суток", "3 суток"
         };
         searchDeepCombo = new JComboBox<>();
@@ -94,7 +94,7 @@ public final class NorthPanel {
     }
 
     public String getSelectedShortMapHeader() {
-        return (String)shortMapHeaderCombo.getSelectedItem();
+        return (String) shortMapHeaderCombo.getSelectedItem();
     }
 
     public String getSelectedDeepSearch() {

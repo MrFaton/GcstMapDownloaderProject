@@ -1,4 +1,4 @@
-package com.mr_faton.FrameParts;
+package com.mr_faton.panel;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

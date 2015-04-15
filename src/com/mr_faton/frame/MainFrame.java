@@ -1,9 +1,9 @@
 package com.mr_faton.frame;
 
-import com.mr_faton.FrameParts.CenterPanel;
-import com.mr_faton.FrameParts.MenuPanel;
-import com.mr_faton.FrameParts.NorthPanel;
-import com.mr_faton.FrameParts.SouthPanel;
+import com.mr_faton.panel.CenterPanel;
+import com.mr_faton.panel.MenuPanel;
+import com.mr_faton.panel.NorthPanel;
+import com.mr_faton.panel.SouthPanel;
 
 import javax.swing.*;
 import java.awt.*;
