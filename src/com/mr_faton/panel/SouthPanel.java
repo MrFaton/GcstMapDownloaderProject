@@ -1,6 +1,7 @@
 package com.mr_faton.panel;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -11,6 +12,7 @@ public final class SouthPanel {
     //only button
     private static SouthPanel southPanel;
     private JButton openButton;
+    private JPanel panel;
 
     public static synchronized SouthPanel getInstance() {
         if (southPanel == null) {
@@ -28,10 +30,15 @@ public final class SouthPanel {
                 System.out.println(CenterPanel.getInstance().getSelectedMap());
             }
         });
+
+        panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+
+        panel.add(openButton);
     }
 
-    public JButton getButton() {
-        return openButton;
+    public JPanel getPanel() {
+        return panel;
     }
 
 }

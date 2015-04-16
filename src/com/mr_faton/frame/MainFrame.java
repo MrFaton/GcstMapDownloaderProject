@@ -34,7 +34,7 @@ public final class MainFrame extends JFrame {
         setJMenuBar(new MenuPanel().getMenuBar());
         add(NorthPanel.getInstance().getPanel(), BorderLayout.NORTH);
         add(CenterPanel.getInstance().getPanel(), BorderLayout.CENTER);
-        add(SouthPanel.getInstance().getButton(), BorderLayout.SOUTH);
+        add(SouthPanel.getInstance().getPanel(), BorderLayout.SOUTH);
 
     }
 }

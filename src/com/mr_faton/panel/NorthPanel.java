@@ -1,6 +1,7 @@
 package com.mr_faton.panel;
 
 import com.mr_faton.Satements.Variables;
+import com.mr_faton.handler.SearchButtonHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -70,6 +71,8 @@ public final class NorthPanel {
                 System.out.println("searchButton is pressed");
                 System.out.println(getSelectedShortMapHeader() + " was selected");
                 System.out.println(getSelectedDeepSearch() + " was selected too");
+
+                new SearchButtonHandler().getSearchResult("qqq", "www");
 
                 String[][] data = new String[2][3];
                 String[] arr1 = {"1", "2", "3"};

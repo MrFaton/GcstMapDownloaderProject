@@ -5,4 +5,5 @@ package com.mr_faton.Satements;
  */
 public interface Variables {
     final String patternFile = "C:\\GcstMapDownloader\\Patterns.txt";
+    final String MAIN_PAGE_URL = "http://gcst.meteo.gov.ua";
 }
