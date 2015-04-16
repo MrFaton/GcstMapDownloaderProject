@@ -25,6 +25,7 @@ public final class SearchButtonHandler {
         try {
             checkConnection();
             checkLogin();
+
         } catch (GCSTMapDownloaderConnectionException ex) {
             System.out.println("No connection...");
         } catch (GCSTMapDownloaderLoginException ex) {
@@ -54,4 +55,5 @@ public final class SearchButtonHandler {
     private void checkLogin() throws IOException, GCSTMapDownloaderLoginException {
 
     }
+
 }
