@@ -16,8 +16,6 @@ import java.util.regex.Pattern;
  * Created by Mr_Faton on 16.04.2015.
  */
 public final class SearchButtonHandler {
-    private String mapHeader;
-    private String deepSearch;
     private String login;
     private String password;
 
@@ -36,8 +34,6 @@ public final class SearchButtonHandler {
     }
 
     public String[][] getSearchResult(String mapHeader, String deepSearch) {
-        this.mapHeader = mapHeader;
-        this.deepSearch = deepSearch;
         URLConnection connection;
         StringBuilder page = new StringBuilder();
 
@@ -133,6 +129,7 @@ public final class SearchButtonHandler {
     }
 
     private String[][] getConvertedMapList(List<GCSTMap> mapList) {
+        Collections.reverse(mapList);//для того чтобы данные выводились в обратном порядке
         int columnCount = 3;
         int rowCount = mapList.size();//т.к. у нас в таблице только 3 колонки
         String[][] convertedMaps = new String[rowCount][columnCount];
