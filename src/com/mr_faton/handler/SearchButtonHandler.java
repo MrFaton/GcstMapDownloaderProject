@@ -1,13 +1,16 @@
 package com.mr_faton.handler;
 
 import com.mr_faton.Satements.Variables;
-import com.mr_faton.handler.exception.GCSTMapDownloaderConnectionException;
-import com.mr_faton.handler.exception.GCSTMapDownloaderLoginException;
+import com.mr_faton.entity.GCSTMap;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Scanner;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Mr_Faton on 16.04.2015.
@@ -15,45 +18,131 @@ import java.util.Scanner;
 public final class SearchButtonHandler {
     private String mapHeader;
     private String deepSearch;
-    private URLConnection connection;
+    private String login;
+    private String password;
 
+    public SearchButtonHandler() {
+        Properties settings = new Properties();
+        try {
+            settings.load(new FileInputStream(Variables.SETTINGS_FILE));
+            login = settings.getProperty("login");
+            password = settings.getProperty("password");
+        } catch (IOException e) {
+            System.out.println("File Not Found!");
+            login = "";
+            password = "";
+        }
+        System.out.println(login + "=" + password);
+    }
 
     public String[][] getSearchResult(String mapHeader, String deepSearch) {
         this.mapHeader = mapHeader;
         this.deepSearch = deepSearch;
+        URLConnection connection;
+        StringBuilder page = new StringBuilder();
 
         try {
-            checkConnection();
-            checkLogin();
+            connection = new URL(Variables.MAP_URL).openConnection();
+            connection.setConnectTimeout(1 * 60 * 1000);
+            connection.setReadTimeout(1 * 60 * 1000);
+            connection.setDoOutput(true);
+            connection.setRequestProperty("Authorization", getAuthorizeKey());
 
-        } catch (GCSTMapDownloaderConnectionException ex) {
-            System.out.println("No connection...");
-        } catch (GCSTMapDownloaderLoginException ex) {
-            System.out.println("Bad Login");
-        } catch (IOException ex) {
-            System.out.println("Some SystemException");
-            ex.printStackTrace();
+            //сформировать POST запрос
+            System.out.println(mapHeader + "=" + deepSearch);
+            Map<String, String> postParameters = new LinkedHashMap<>();
+            postParameters.put("find", mapHeader);
+            postParameters.put("Header", "");
+            postParameters.put("dip", deepSearch);
+
+            //отправить на сервер ПОСТ запрос
+            try (PrintWriter writer = new PrintWriter(connection.getOutputStream())) {
+                boolean firstEntry = true;
+                for (Map.Entry<String, String> entry : postParameters.entrySet()) {
+                    if (firstEntry) {
+                        firstEntry = false;
+                    } else {
+                        writer.print('&');
+                    }
+                    writer.print(entry.getKey());
+                    writer.print('=');
+                    writer.print(entry.getValue());
+                }
+            }
+
+//            прочитать ответ от сервера
+            try (Scanner input = new Scanner(connection.getInputStream(), "koi8-u")) {
+                while (input.hasNextLine()) {
+                    page.append(input.nextLine() + "\n");
+                }
+            }
+
+            List<GCSTMap> gcstMapList = findMaps(page.toString());
+            String[][] convertedMapList = getConvertedMapList(gcstMapList);
+            return convertedMapList;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
-
-        return null;
     }
 
-    private void checkConnection() throws IOException, GCSTMapDownloaderConnectionException {
-        connection = new URL(Variables.MAIN_PAGE_URL).openConnection();
-        connection.setConnectTimeout(2 * 60 * 1000);//ожидать соединение 2 мин
-        connection.setReadTimeout(1 * 60 * 1000);//читать из канала не дольше 1 мин
-        connection.connect();
+    private String getAuthorizeKey() {
+        String authorization = login + ":" + password;
+        authorization = Base64.getEncoder().encodeToString(authorization.getBytes());
+        return "Basic " + authorization;
+    }
 
-        Scanner in = new Scanner(connection.getInputStream());
-        if (!in.hasNextLine()) {
-            throw new GCSTMapDownloaderConnectionException("НЕ могу прочитать данные с главной страницы");
-        } else {
-            System.out.println("connection successful");
+    private List<GCSTMap> findMaps(String htmlPage) {
+        List<GCSTMap> gcstMapList = new LinkedList<>();
+        String downloadLink = "";
+        String mapName = "";
+        String mapHeader = "";
+        String mapTerm = "";
+
+        String searchRegExp = "" +
+                ".*class=result><a href=\"(.*?&s=1)\">|" + /*download link*/
+                ".*class=result><a href=\".*?>(.*?)<a|" + /*map name*/
+                ".*?tt>(.*?)</tt|" + /*map header*/
+                ".*class=result>(.*?)<"; /*map term*/
+        Pattern pattern = Pattern.compile(searchRegExp, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(htmlPage);
+
+        while (matcher.find()) {
+            if (matcher.group(1) != null) {
+                downloadLink = matcher.group(1).trim();
+            }
+            if (matcher.group(2) != null) {
+                mapName = matcher.group(2);
+            }
+            if (matcher.group(3) != null) {
+                mapHeader = matcher.group(3);
+            }
+            if (matcher.group(4) != null) {
+                mapTerm = matcher.group(4).trim();
+
+                gcstMapList.add(new GCSTMap(downloadLink, mapName, mapHeader, mapTerm));
+            }
+
         }
+//        for (GCSTMap gcstMap : gcstMapList) {
+//            System.out.println(gcstMap.toString());
+//        }
+
+
+        return gcstMapList;
     }
 
-    private void checkLogin() throws IOException, GCSTMapDownloaderLoginException {
-
+    private String[][] getConvertedMapList(List<GCSTMap> mapList) {
+        int columnCount = 3;
+        int rowCount = mapList.size();//т.к. у нас в таблице только 3 колонки
+        String[][] convertedMaps = new String[rowCount][columnCount];
+        int i = 0;
+        for (GCSTMap gcstMap : mapList) {
+            convertedMaps[i][0] = gcstMap.getName();
+            convertedMaps[i][1] = gcstMap.getHeader();
+            convertedMaps[i][2] = gcstMap.getTerm();
+            i++;
+        }
+        return convertedMaps;
     }
-
 }

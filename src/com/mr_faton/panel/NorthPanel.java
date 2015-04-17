@@ -44,7 +44,7 @@ public final class NorthPanel {
         //создаём выпадающий список с заголовками карт
         shortMapHeaderCombo = new JComboBox<>();
         try {
-            Scanner in = new Scanner(new FileInputStream(Variables.patternFile));
+            Scanner in = new Scanner(new FileInputStream(Variables.PATTERN_FILE));
             while (in.hasNextLine()) {
                 shortMapHeaderCombo.addItem(in.nextLine());
             }
@@ -68,18 +68,15 @@ public final class NorthPanel {
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("searchButton is pressed");
-                System.out.println(getSelectedShortMapHeader() + " was selected");
-                System.out.println(getSelectedDeepSearch() + " was selected too");
+                String mapHeader = getSelectedShortMapHeader();
 
-                new SearchButtonHandler().getSearchResult("qqq", "www");
+                String deepSearch = getSelectedDeepSearch();
+                String[] deepSearchParameters = deepSearch.split(" ");
+                deepSearch = deepSearchParameters[0];
 
-                String[][] data = new String[2][3];
-                String[] arr1 = {"1", "2", "3"};
-                String[] arr2 = {"4", "5", "6"};
-                data[0] = arr1;
-                data[1] = arr2;
-                CenterPanel.getInstance().addRowsInTable(data);
+                new SearchButtonHandler().getSearchResult(mapHeader, deepSearch);
+
+                CenterPanel.getInstance().addRowsInTable(new SearchButtonHandler().getSearchResult(mapHeader, deepSearch));
             }
         });
 

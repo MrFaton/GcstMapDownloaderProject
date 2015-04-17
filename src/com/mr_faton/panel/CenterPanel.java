@@ -3,6 +3,7 @@ package com.mr_faton.panel;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.Arrays;
 
 /**
  * Created by Mr_Faton on 15.04.2015.
@@ -25,7 +26,9 @@ public final class CenterPanel {
         columnNames = new String[]{"Название", "Заголовок", "Срок"};
         model = new DefaultTableModel(0, columnNames.length);
         model.setColumnIdentifiers(columnNames);
+
         table = new JTable(model);
+//        table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
         table.setAutoCreateRowSorter(true);
         table.setBackground(Color.white);
         table.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -40,6 +43,7 @@ public final class CenterPanel {
     }
 
     public void addRowsInTable(String[][] data) {
+        System.out.println(Arrays.deepToString(data));
         for (String[] base : data) {
             model.addRow(base);
         }
