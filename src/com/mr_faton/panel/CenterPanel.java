@@ -43,6 +43,7 @@ public final class CenterPanel {
     }
 
     public void addRowsInTable(String[][] data) {
+        model.setRowCount(0);//очистить таблицу
         System.out.println(Arrays.deepToString(data));
         for (String[] base : data) {
             model.addRow(base);
