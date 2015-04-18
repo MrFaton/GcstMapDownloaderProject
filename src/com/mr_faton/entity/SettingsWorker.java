@@ -89,7 +89,7 @@ public final class SettingsWorker {
 
     public Map<String, String> getAllPatterns() {
         LinkedHashMap<String, String> patternsMap = new LinkedHashMap<>();
-        NodeList patternsList = document.getElementsByTagName("patterns");
+        NodeList patternsList = document.getElementsByTagName("pattern");
         Element pattern = null;
         Node mapNameNode = null;
         Node mapHeaderNode = null;
