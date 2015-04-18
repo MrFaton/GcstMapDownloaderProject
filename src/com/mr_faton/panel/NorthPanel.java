@@ -1,15 +1,13 @@
 package com.mr_faton.panel;
 
-import com.mr_faton.Satements.Variables;
+import com.mr_faton.entity.SettingsWorker;
 import com.mr_faton.handler.SearchButtonHandler;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
+import java.util.Map;
 
 /**
  * Created by Mr_Faton on 15.04.2015.
@@ -18,7 +16,7 @@ public final class NorthPanel {
     private JPanel panel;
     private JLabel shortMapHeaderLabel;
     private JLabel searchDeepLabel;
-    private JComboBox<String> shortMapHeaderCombo;
+    private JComboBox<String> mapNameCombo;
     private JComboBox<String> searchDeepCombo;
     private JButton searchButton;
     private String[] deepSearch;
@@ -42,16 +40,14 @@ public final class NorthPanel {
         searchDeepLabel = new JLabel("Глубина поиска:", JLabel.LEFT);
 
         //создаём выпадающий список с заголовками карт
-        shortMapHeaderCombo = new JComboBox<>();
-        try {
-            Scanner in = new Scanner(new FileInputStream(Variables.PATTERN_FILE));
-            while (in.hasNextLine()) {
-                shortMapHeaderCombo.addItem(in.nextLine());
-            }
-        } catch (FileNotFoundException e) {
-            //File not found
+        mapNameCombo = new JComboBox<>();
+
+        SettingsWorker settingsWorker = SettingsWorker.getInstance();
+        Map<String, String> allPatternsMap = settingsWorker.getAllPatterns();
+        for (Map.Entry<String, String> entry : allPatternsMap.entrySet()) {
+            mapNameCombo.addItem(entry.getKey());
         }
-        shortMapHeaderCombo.setEditable(true);
+        mapNameCombo.setEditable(true);
 
         //создаём выпадающий список с вариантами глубины поиска
         deepSearch = new String[]{
@@ -83,7 +79,7 @@ public final class NorthPanel {
         panel.add(shortMapHeaderLabel);
         panel.add(searchDeepLabel);
         panel.add(new JLabel());//Т.к. у нас сетка, то над кнопкой поиска не должно быть меток
-        panel.add(shortMapHeaderCombo);
+        panel.add(mapNameCombo);
         panel.add(searchDeepCombo);
         panel.add(searchButton);
     }
@@ -94,7 +90,7 @@ public final class NorthPanel {
     }
 
     public String getSelectedShortMapHeader() {
-        return (String) shortMapHeaderCombo.getSelectedItem();
+        return (String) mapNameCombo.getSelectedItem();
     }
 
     public String getSelectedDeepSearch() {

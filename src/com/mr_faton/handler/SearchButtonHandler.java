@@ -2,8 +2,8 @@ package com.mr_faton.handler;
 
 import com.mr_faton.Satements.Variables;
 import com.mr_faton.entity.GCSTMap;
+import com.mr_faton.entity.SettingsWorker;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
@@ -20,16 +20,9 @@ public final class SearchButtonHandler {
     private String password;
 
     public SearchButtonHandler() {
-        Properties settings = new Properties();
-        try {
-            settings.load(new FileInputStream(Variables.SETTINGS_FILE));
-            login = settings.getProperty("login");
-            password = settings.getProperty("password");
-        } catch (IOException e) {
-            System.out.println("File Not Found!");
-            login = "";
-            password = "";
-        }
+        SettingsWorker settingsWorker = SettingsWorker.getInstance();
+        login = "";
+        password = "";
         System.out.println(login + "=" + password);
     }
 
