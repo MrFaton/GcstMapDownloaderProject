@@ -1,6 +1,8 @@
 package com.mr_faton.handler;
 
 import com.mr_faton.Satements.Variables;
+import com.mr_faton.StartProgram;
+import com.mr_faton.entity.ErrorMessager;
 import com.mr_faton.entity.GCSTMap;
 import com.mr_faton.entity.SettingsWorker;
 
@@ -67,9 +69,6 @@ public final class SearchButtonHandler {
             }
 
             List<GCSTMap> gcstMapList = findMaps(page.toString());
-            if (gcstMapList.size() == 0) {
-                return null;
-            }
             String[][] convertedMapList = getConvertedMapList(gcstMapList);
             return convertedMapList;
         } catch (IOException outerEx) {
@@ -78,18 +77,22 @@ public final class SearchButtonHandler {
             try {
                 responseCode = httpURLConnection.getResponseCode();
             } catch (IOException innerEx) {
-                System.err.println("Возможно на вашем компьютере отсутствует продключение к интернет");
+                new ErrorMessager("Возможно на вашем компьютере отсутствует продключение к интернет");
             }
 
             if (responseCode != 0 && responseCode != null) {
                 switch (responseCode) {
                     case 401: {
-                        System.err.println("Логин или пароль не корректен");
+                        new ErrorMessager("Внимание! Логин или пароль не верен!\n" +
+                                "Попробуйте зайти в настройки и заменить логин и пароль.");
                         break;
                     }
                 }
             } else {
-                System.err.println("Another Ex");
+                new ErrorMessager("Возникла неопределённая ошибка.\n" +
+                        "Программа будет завершена...");
+                StartProgram.mainFrame.dispose();
+                System.exit(-1);
                 outerEx.printStackTrace();
             }
 

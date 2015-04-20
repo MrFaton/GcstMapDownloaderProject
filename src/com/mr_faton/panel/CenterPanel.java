@@ -3,14 +3,13 @@ package com.mr_faton.panel;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.util.Arrays;
 
 /**
  * Created by Mr_Faton on 15.04.2015.
  */
 public final class CenterPanel {
     private JPanel panel;
-    private DefaultTableModel model;
+    private MyTableModel model;
     private JTable table;
     private String[] columnNames;
     private static CenterPanel centerPanel;
@@ -24,10 +23,12 @@ public final class CenterPanel {
 
     public CenterPanel() {
         columnNames = new String[]{"Название", "Заголовок", "Срок"};
-        model = new DefaultTableModel(0, columnNames.length);
+        model = new MyTableModel(0, columnNames.length);
         model.setColumnIdentifiers(columnNames);
 
+
         table = new JTable(model);
+
 //        table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
         table.setAutoCreateRowSorter(true);
         table.setBackground(Color.white);
@@ -44,7 +45,6 @@ public final class CenterPanel {
 
     public void addRowsInTable(String[][] data) {
         model.setRowCount(0);//очистить таблицу
-        System.out.println(Arrays.deepToString(data));
         for (String[] base : data) {
             model.addRow(base);
         }
@@ -62,5 +62,16 @@ public final class CenterPanel {
             int row = table.getSelectedRow();
             return (String) table.getValueAt(row, 1);
         }
+    }
+}
+
+class MyTableModel extends DefaultTableModel {
+    MyTableModel(int rowCount, int columnCount) {
+        super(rowCount, columnCount);
+    }
+
+    @Override
+    public boolean isCellEditable(int row, int column) {
+        return false;
     }
 }

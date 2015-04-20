@@ -1,5 +1,6 @@
 package com.mr_faton.panel;
 
+import com.mr_faton.StartProgram;
 import com.mr_faton.entity.SettingsWorker;
 import com.mr_faton.handler.SearchButtonHandler;
 
@@ -84,9 +85,14 @@ public final class NorthPanel {
                 SearchButtonHandler searchButtonHandler = new SearchButtonHandler();
                 String[][] foundMaps = searchButtonHandler.getSearchResult(mapHeader, deepSearchStr);
                 if (foundMaps != null) {
-                    CenterPanel.getInstance().addRowsInTable(foundMaps);
-                } else {
-                    System.err.println("По запросу не найденно ни одной карты");
+                    if (foundMaps.length > 0) {
+                        CenterPanel.getInstance().addRowsInTable(foundMaps);
+                    } else {
+                        JOptionPane.showMessageDialog(StartProgram.mainFrame,
+                                "По вашему запросу не найдено ни одной карты...\n" +
+                                        "Введите новый запрос или лучше выберите карту из списка",
+                                "Поиск", JOptionPane.INFORMATION_MESSAGE);
+                    }
                 }
             }
         });

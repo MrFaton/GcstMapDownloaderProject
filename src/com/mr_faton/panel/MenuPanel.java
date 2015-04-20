@@ -1,5 +1,7 @@
 package com.mr_faton.panel;
 
+import com.mr_faton.frame.MapPatternsDialog;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,8 +11,10 @@ import java.awt.event.ActionListener;
  */
 public final class MenuPanel {
     private JMenuBar menuBar;
+    private JDialog mapPatternsDialog;
 
     public MenuPanel() {
+        mapPatternsDialog = null;
         menuBar = new JMenuBar();
         JMenu options = new JMenu("Настройки");
         JMenu help = new JMenu("Помощь");
@@ -28,7 +32,10 @@ public final class MenuPanel {
         patternSettings.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("pattern settings menu clicked");
+                if (mapPatternsDialog == null) {
+                    mapPatternsDialog = new MapPatternsDialog();
+                }
+                mapPatternsDialog.setVisible(true);
             }
         });
 
