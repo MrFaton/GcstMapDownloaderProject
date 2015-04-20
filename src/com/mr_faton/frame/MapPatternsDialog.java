@@ -80,7 +80,7 @@ public class MapPatternsDialog extends JDialog {
             private void showMessage(int row, String columnName) {
                 JOptionPane.showMessageDialog(StartProgram.mainFrame,
                         "Не не не, мы не будем сохранять данные,\n" +
-                                "когда ячейка в строке " + row + " и столбце " + columnName + " пустая.\n" +
+                                "когда ячейка в строке \"" + row + "\" и столбце \"" + columnName + "\" пустая.\n" +
                                 "Вернитесь к таблице и заполните пустую ячейку!",
                         "Пустая ячейка!",
                         JOptionPane.WARNING_MESSAGE);
