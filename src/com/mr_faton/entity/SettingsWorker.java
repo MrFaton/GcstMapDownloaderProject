@@ -16,7 +16,6 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -24,12 +23,13 @@ import java.util.Map;
  * Created by Mr_Faton on 18.04.2015.
  */
 public final class SettingsWorker {
-    private File settingsFile;
+    private File settingsFile;//файл с настройками
     DocumentBuilderFactory documentBuilderFactory;
     DocumentBuilder documentBuilder;
-    Document document;
-    private static SettingsWorker settingsWorker = null;
+    Document document;//наш xml документ
+    private static SettingsWorker settingsWorker = null;//наш класс - обработчик xml должен быть синглетоном
 
+    //приватный конструктор нашего класса, т.к. он синглетон
     private SettingsWorker() {
         settingsFile = new File("C:\\GcstMapDownloader\\Settings.xml");
 //        try {
@@ -47,15 +47,21 @@ public final class SettingsWorker {
             documentBuilderFactory = DocumentBuilderFactory.newInstance();
             documentBuilder = documentBuilderFactory.newDocumentBuilder();
             if (settingsFile.exists()) {
+                //если файл существует, парсим из него данные
                 document = documentBuilder.parse(settingsFile);
             } else {
+                //если файл не существует создаём пустой - дефолтный файл настроек
                 document = createEmptySettingsFile();
             }
         } catch (ParserConfigurationException | SAXException | IOException e) {
-            e.printStackTrace();
+            //при возникновении каких-либо ошибок при чтении файла (значит он повреждён) создаём дефолтный файл настроек
+            document = createEmptySettingsFile();
         }
     }
 
+    //ДОСТУПНЫЕ ДЛЯ ВСЕХ МЕТОДЫ
+
+    //получить экземпляр нашего класса - обработчика xml файла с настройками
     public static synchronized SettingsWorker getInstance() {
         if (settingsWorker == null) {
             settingsWorker = new SettingsWorker();
@@ -63,23 +69,25 @@ public final class SettingsWorker {
         return settingsWorker;
     }
 
+    //получить логин и пароль
     public Map<String, String> getLoginAndPass() {
-        Node loginNode = document.getElementsByTagName(Variables.LOGIN_STR).item(0);
-        Node passNode = document.getElementsByTagName(Variables.PASSWORD_STR).item(0);
+        Node loginNode = document.getElementsByTagName("login").item(0);
+        Node passNode = document.getElementsByTagName("password").item(0);
         String login = loginNode.getTextContent();
         String password = passNode.getTextContent();
-        HashMap<String, String> mapAuthorize = new HashMap<>(3, 1);
-        mapAuthorize.put(Variables.LOGIN_STR, login);
-        mapAuthorize.put(Variables.PASSWORD_STR, password);
+        Map<String, String> mapAuthorize = new LinkedHashMap<>(3, 1);
+        mapAuthorize.put("login", login);
+        mapAuthorize.put("password", password);
         return mapAuthorize;
     }
 
+    //установить логин и пароль
     public void setLoginAndPass(Map<String, String> authorizeMap) {
-        String login = authorizeMap.get(Variables.LOGIN_STR);
-        String password = authorizeMap.get(Variables.PASSWORD_STR);
+        String login = authorizeMap.get("login");
+        String password = authorizeMap.get("password");
 
-        Node loginNode = document.getElementsByTagName(Variables.LOGIN_STR).item(0).getFirstChild();
-        Node passNode = document.getElementsByTagName(Variables.PASSWORD_STR).item(0).getFirstChild();
+        Node loginNode = document.getElementsByTagName("login").item(0).getFirstChild();
+        Node passNode = document.getElementsByTagName("password").item(0).getFirstChild();
 
         loginNode.setNodeValue(login);
         passNode.setNodeValue(password);
@@ -87,15 +95,34 @@ public final class SettingsWorker {
         saveSettings(document);
     }
 
+    //получить путь к редактору карт
+    public String getCardEditorPath() {
+        Node cardEditorNode = document.getElementsByTagName("card_editor").item(0);
+        return cardEditorNode.getTextContent();
+    }
+
+    //установить путь для редактора карт
+    public void setCardEditorPath(String path) {
+        Node cardEditorNode = document.getElementsByTagName("card_editor").item(0).getFirstChild();
+        cardEditorNode.setNodeValue(path);
+
+        //можно было устанавлитвать значение и таким образом
+//        Node cardEditorNode = document.getElementsByTagName("card_editor").item(0);
+//        cardEditorNode.setTextContent(path);
+
+        saveSettings(document);
+    }
+
+    //получить все имена и заголовки карт
     public Map<String, String> getAllPatterns() {
         LinkedHashMap<String, String> patternsMap = new LinkedHashMap<>();
-        NodeList patternsList = document.getElementsByTagName("pattern");
-        Element pattern = null;
-        Node mapNameNode = null;
-        Node mapHeaderNode = null;
+        NodeList patternList = document.getElementsByTagName("pattern");
+        Element pattern;
+        Node mapNameNode;
+        Node mapHeaderNode;
         //for each pattern
-        for (int i = 0; i < patternsList.getLength(); i++) {
-            pattern = (Element) patternsList.item(i);
+        for (int i = 0; i < patternList.getLength(); i++) {
+            pattern = (Element) patternList.item(i);
             mapNameNode = pattern.getElementsByTagName("map_name").item(0);
             mapHeaderNode = pattern.getElementsByTagName("map_header").item(0);
 
@@ -104,6 +131,37 @@ public final class SettingsWorker {
         return patternsMap;
     }
 
+    //заменить все имена и заголовки карт данными именами и заголовками
+    public void setPatterns(Map<String, String> patternsMap) {
+        deleteAllPatterns();
+
+        Node patternsNode = document.getElementsByTagName("patterns").item(0);
+        for (Map.Entry<String, String> entry : patternsMap.entrySet()) {
+            String mapName = entry.getKey();
+            String mapHeader = entry.getValue();
+
+            Element patternElement = document.createElement("pattern");
+
+            Element mapNameElement = document.createElement("map_name");
+            Text mapNameElementText = document.createTextNode(mapName);
+            mapNameElement.appendChild(mapNameElementText);
+
+            Element mapHeaderElement = document.createElement("map_header");
+            Text mapHeaderElementText = document.createTextNode(mapHeader);
+            mapHeaderElement.appendChild(mapHeaderElementText);
+
+            patternElement.appendChild(mapNameElement);
+            patternElement.appendChild(mapHeaderElement);
+
+            patternsNode.appendChild(patternElement);
+        }
+
+        saveSettings(document);
+    }
+
+    //ПРИВАТНЫЕ - СЛУЖЕБНЫЕ МЕТОДЫ
+
+    //сохранить xml-файл с настройками
     private synchronized void saveSettings(Document docToWrite) {
         try (FileOutputStream fileOutput = new FileOutputStream(settingsFile)) {
             //построить холостое преобразование
@@ -119,6 +177,7 @@ public final class SettingsWorker {
         }
     }
 
+    //создать дефолтный - пустой файл с настройками
     private Document createEmptySettingsFile() {
         Document doc = documentBuilder.newDocument();
 
@@ -138,7 +197,16 @@ public final class SettingsWorker {
         authorization.appendChild(login);
         authorization.appendChild(password);
 
+        Element system = doc.createElement("system");
+
+        Element card_editor = doc.createElement("card_editor");
+        Text card_editorText = doc.createTextNode("путь к редактору карт");
+        card_editor.appendChild(card_editorText);
+
+        system.appendChild(card_editor);
+
         program_settings.appendChild(authorization);
+        program_settings.appendChild(system);
 
         Element patterns = doc.createElement("patterns");
 
@@ -165,19 +233,41 @@ public final class SettingsWorker {
         saveSettings(doc);
         return doc;
     }
+
+    //удалить все имена и заголовки карт
+    private void deleteAllPatterns() {
+        Node patternsNode = document.getElementsByTagName("patterns").item(0);
+        while (patternsNode.hasChildNodes()) {
+            patternsNode.removeChild(patternsNode.getFirstChild());
+        }
+    }
 }
 
-class Test {
+class SettingsWorker_Test {
     public static void main(String[] args) {
         SettingsWorker settingsWorker = SettingsWorker.getInstance();
+
+        System.out.println(settingsWorker.getLoginAndPass());
 
 //        Map<String, String> map = new HashMap<>();
 //        map.put("login", "kharmet");
 //        map.put("password", "9NCzR##?3z");
 //        settingsWorker.setLoginAndPass(map);
 
-//        System.out.println(settingsWorker.getLoginAndPass());
+//        System.out.println(settingsWorker.getCardEditorPath());
 
-        System.out.println(settingsWorker.getAllPatterns());
+//        settingsWorker.setCardEditorPath("C:\\test.exe");
+//
+
+//        System.out.println(settingsWorker.getAllPatterns());
+
+//        Map<String, String> map = new LinkedHashMap<>();
+//        map.put("Микрокольцовка", "QYUA98");
+//        map.put("Nmae2", "Header2");
+//        settingsWorker.setPatterns(map);
     }
+
+    /*
+    Тестирующий класс. Зпускать тольок по группам строк
+     */
 }

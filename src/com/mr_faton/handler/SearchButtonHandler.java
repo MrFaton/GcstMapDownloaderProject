@@ -6,6 +6,7 @@ import com.mr_faton.entity.SettingsWorker;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
@@ -21,13 +22,13 @@ public final class SearchButtonHandler {
 
     public SearchButtonHandler() {
         SettingsWorker settingsWorker = SettingsWorker.getInstance();
-        login = "";
-        password = "";
-        System.out.println(login + "=" + password);
+        Map<String, String> authorizeMap = settingsWorker.getLoginAndPass();
+        login = authorizeMap.get("login");
+        password = authorizeMap.get("password");
     }
 
     public String[][] getSearchResult(String mapHeader, String deepSearch) {
-        URLConnection connection;
+        URLConnection connection = null;
         StringBuilder page = new StringBuilder();
 
         try {
@@ -38,7 +39,6 @@ public final class SearchButtonHandler {
             connection.setRequestProperty("Authorization", getAuthorizeKey());
 
             //сформировать POST запрос
-            System.out.println(mapHeader + "=" + deepSearch);
             Map<String, String> postParameters = new LinkedHashMap<>();
             postParameters.put("find", mapHeader);
             postParameters.put("Header", "");
@@ -67,10 +67,32 @@ public final class SearchButtonHandler {
             }
 
             List<GCSTMap> gcstMapList = findMaps(page.toString());
+            if (gcstMapList.size() == 0) {
+                return null;
+            }
             String[][] convertedMapList = getConvertedMapList(gcstMapList);
             return convertedMapList;
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException outerEx) {
+            HttpURLConnection httpURLConnection = (HttpURLConnection) connection;
+            Integer responseCode = 0;
+            try {
+                responseCode = httpURLConnection.getResponseCode();
+            } catch (IOException innerEx) {
+                System.err.println("Возможно на вашем компьютере отсутствует продключение к интернет");
+            }
+
+            if (responseCode != 0 && responseCode != null) {
+                switch (responseCode) {
+                    case 401: {
+                        System.err.println("Логин или пароль не корректен");
+                        break;
+                    }
+                }
+            } else {
+                System.err.println("Another Ex");
+                outerEx.printStackTrace();
+            }
+
             return null;
         }
     }
@@ -113,11 +135,6 @@ public final class SearchButtonHandler {
             }
 
         }
-//        for (GCSTMap gcstMap : gcstMapList) {
-//            System.out.println(gcstMap.toString());
-//        }
-
-
         return gcstMapList;
     }
 

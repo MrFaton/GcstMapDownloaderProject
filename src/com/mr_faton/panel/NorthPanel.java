@@ -19,6 +19,7 @@ public final class NorthPanel {
     private JComboBox<String> mapNameCombo;
     private JComboBox<String> searchDeepCombo;
     private JButton searchButton;
+    private Map<String, String> allPatternsMap;
     private String[] deepSearch;
     private static NorthPanel northPanel;
 
@@ -43,7 +44,7 @@ public final class NorthPanel {
         mapNameCombo = new JComboBox<>();
 
         SettingsWorker settingsWorker = SettingsWorker.getInstance();
-        Map<String, String> allPatternsMap = settingsWorker.getAllPatterns();
+        allPatternsMap = settingsWorker.getAllPatterns();
         for (Map.Entry<String, String> entry : allPatternsMap.entrySet()) {
             mapNameCombo.addItem(entry.getKey());
         }
@@ -64,15 +65,29 @@ public final class NorthPanel {
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String mapHeader = getSelectedShortMapHeader();
+                String mapName = getSelectedMapName();
+                String mapHeader;
+                if (allPatternsMap.containsKey(mapName)) {
+                    mapHeader = allPatternsMap.get(mapName);
+                } else {
+                    mapHeader = mapName;
+                }
 
-                String deepSearch = getSelectedDeepSearch();
-                String[] deepSearchParameters = deepSearch.split(" ");
-                deepSearch = deepSearchParameters[0];
-
-                new SearchButtonHandler().getSearchResult(mapHeader, deepSearch);
-
-                CenterPanel.getInstance().addRowsInTable(new SearchButtonHandler().getSearchResult(mapHeader, deepSearch));
+                String deepSearchStr = getSelectedDeepSearch();
+                String[] deepSearchParameters = deepSearchStr.split(" ");
+                int deepSearch = Integer.valueOf(deepSearchParameters[0]);
+                String conditionSearch = deepSearchParameters[1];
+                if (conditionSearch.startsWith("мес")) {
+                    deepSearch = deepSearch * 30;
+                }
+                deepSearchStr = deepSearch + "";
+                SearchButtonHandler searchButtonHandler = new SearchButtonHandler();
+                String[][] foundMaps = searchButtonHandler.getSearchResult(mapHeader, deepSearchStr);
+                if (foundMaps != null) {
+                    CenterPanel.getInstance().addRowsInTable(foundMaps);
+                } else {
+                    System.err.println("По запросу не найденно ни одной карты");
+                }
             }
         });
 
@@ -89,7 +104,7 @@ public final class NorthPanel {
         return panel;
     }
 
-    public String getSelectedShortMapHeader() {
+    public String getSelectedMapName() {
         return (String) mapNameCombo.getSelectedItem();
     }
 
