@@ -1,5 +1,7 @@
 package com.mr_faton.panel;
 
+import com.mr_faton.handler.OpenButtonHandler;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -26,8 +28,12 @@ public final class SouthPanel {
         openButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("open");
-                System.out.println(CenterPanel.getInstance().getSelectedMap());
+                String selectedMapHeader = CenterPanel.getInstance().getSelectedMap();
+                if (selectedMapHeader != null && selectedMapHeader.length() != 0) {
+                    OpenButtonHandler openButtonHandler = new OpenButtonHandler();
+                    openButtonHandler.openMapInEditor(selectedMapHeader);
+                }
+
             }
         });
 
@@ -40,5 +46,4 @@ public final class SouthPanel {
     public JPanel getPanel() {
         return panel;
     }
-
 }

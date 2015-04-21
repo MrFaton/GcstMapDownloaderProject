@@ -2,6 +2,7 @@ package com.mr_faton.frame;
 
 import com.mr_faton.StartProgram;
 import com.mr_faton.entity.SettingsWorker;
+import com.mr_faton.entity.WarningMessenger;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -14,7 +15,10 @@ import java.util.Map;
 /**
  * Created by Mr_Faton on 20.04.2015.
  */
-public class MapPatternsDialog extends JDialog {
+public final class MapPatternsDialog extends JDialog {
+    private static int WIDTH = 450;
+    private static int HEIGHT = 400;
+
     public MapPatternsDialog() {
         super(StartProgram.mainFrame, "Настройка шаблонов карт", true);
 
@@ -60,16 +64,15 @@ public class MapPatternsDialog extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 Map<String, String> allPatternsMap = new LinkedHashMap<String, String>();
                 int rowCount = table.getRowCount();
-                int columnCount = 2;
                 for (int row = 0; row < rowCount; row++) {
                     String mapName = (String) tableModel.getValueAt(row, 0);
-                    if (mapName == null) {
-                        showMessage(row, table.getColumnName(0));
+                    if (mapName == null || mapName.length() == 0) {
+                        showMessage(row + 1, table.getColumnName(0));
                         return;
                     }
                     String mapHeader = (String) tableModel.getValueAt(row, 1);
-                    if (mapHeader == null) {
-                        showMessage(row, table.getColumnName(1));
+                    if (mapHeader == null || mapHeader.length() == 0) {
+                        showMessage(row + 1, table.getColumnName(1));
                         return;
                     }
                     allPatternsMap.put(mapName, mapHeader);
@@ -78,12 +81,11 @@ public class MapPatternsDialog extends JDialog {
             }
 
             private void showMessage(int row, String columnName) {
-                JOptionPane.showMessageDialog(StartProgram.mainFrame,
+                new WarningMessenger("Пустая ячейка!",
                         "Не не не, мы не будем сохранять данные,\n" +
                                 "когда ячейка в строке \"" + row + "\" и столбце \"" + columnName + "\" пустая.\n" +
-                                "Вернитесь к таблице и заполните пустую ячейку!",
-                        "Пустая ячейка!",
-                        JOptionPane.WARNING_MESSAGE);
+                                "Вернитесь к таблице и заполните пустую ячейку!"
+                );
             }
         });
 
@@ -103,6 +105,12 @@ public class MapPatternsDialog extends JDialog {
 
         add(scrollPane, BorderLayout.CENTER);
         add(buttonsPanel, BorderLayout.SOUTH);
-        setSize(450, 400);
+
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        Dimension monitorScreenSize = toolkit.getScreenSize();
+        int monitorWidth = monitorScreenSize.width;
+        int monitorHeight = monitorScreenSize.height;
+        setSize(WIDTH, HEIGHT);
+        setLocation(monitorWidth / 2 - WIDTH / 2, monitorHeight / 2 - HEIGHT / 2);
     }
 }

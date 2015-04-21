@@ -2,7 +2,7 @@ package com.mr_faton.handler;
 
 import com.mr_faton.Satements.Variables;
 import com.mr_faton.StartProgram;
-import com.mr_faton.entity.ErrorMessager;
+import com.mr_faton.entity.ErrorMessenger;
 import com.mr_faton.entity.GCSTMap;
 import com.mr_faton.entity.SettingsWorker;
 
@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 public final class SearchButtonHandler {
     private String login;
     private String password;
+    public static List<GCSTMap> gcstMapList;
 
     public SearchButtonHandler() {
         SettingsWorker settingsWorker = SettingsWorker.getInstance();
@@ -77,19 +78,19 @@ public final class SearchButtonHandler {
             try {
                 responseCode = httpURLConnection.getResponseCode();
             } catch (IOException innerEx) {
-                new ErrorMessager("Возможно на вашем компьютере отсутствует продключение к интернет");
+                new ErrorMessenger("Возможно на вашем компьютере отсутствует продключение к интернет");
             }
 
             if (responseCode != 0 && responseCode != null) {
                 switch (responseCode) {
                     case 401: {
-                        new ErrorMessager("Внимание! Логин или пароль не верен!\n" +
+                        new ErrorMessenger("Внимание! Логин или пароль не верен!\n" +
                                 "Попробуйте зайти в настройки и заменить логин и пароль.");
                         break;
                     }
                 }
             } else {
-                new ErrorMessager("Возникла неопределённая ошибка.\n" +
+                new ErrorMessenger("Возникла неопределённая ошибка.\n" +
                         "Программа будет завершена...");
                 StartProgram.mainFrame.dispose();
                 System.exit(-1);
@@ -107,7 +108,7 @@ public final class SearchButtonHandler {
     }
 
     private List<GCSTMap> findMaps(String htmlPage) {
-        List<GCSTMap> gcstMapList = new LinkedList<>();
+        gcstMapList = new LinkedList<>();
         String downloadLink = "";
         String mapName = "";
         String mapHeader = "";

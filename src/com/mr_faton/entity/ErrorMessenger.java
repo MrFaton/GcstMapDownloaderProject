@@ -7,9 +7,9 @@ import javax.swing.*;
 /**
  * Created by Mr_Faton on 20.04.2015.
  */
-public final class ErrorMessager {
+public final class ErrorMessenger {
 
-    public ErrorMessager(String message) {
+    public ErrorMessenger(String message) {
         JOptionPane.showMessageDialog(StartProgram.mainFrame, message, "Ошибка!", JOptionPane.ERROR_MESSAGE);
     }
 }

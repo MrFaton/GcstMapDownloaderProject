@@ -1,5 +1,7 @@
 package com.mr_faton.entity;
 
+import java.util.Objects;
+
 /**
  * Created by root on 17.04.2015.
  */
@@ -30,6 +32,22 @@ public class GCSTMap {
 
     public String getTerm() {
         return term;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(downloadLink, name, header, term);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == null) return false;
+        if (this.getClass() != other.getClass()) return false;
+        GCSTMap otherObject = (GCSTMap) other;
+        return this.downloadLink.equals(otherObject.getDownloadLink()) &&
+                this.name.equals(otherObject.getName()) &&
+                this.header.equals(otherObject.getHeader()) &&
+                this.term.equals(otherObject.getTerm());
     }
 
     @Override

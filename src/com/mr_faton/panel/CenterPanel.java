@@ -1,5 +1,7 @@
 package com.mr_faton.panel;
 
+import com.mr_faton.entity.WarningMessenger;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -56,7 +58,8 @@ public final class CenterPanel {
 
     public String getSelectedMap() {
         if (table.getSelectedRow() < 0) {
-            System.out.println("строка не выбрана");
+            new WarningMessenger("Внимание!", "Вы не выбрали ни одной карты!\n" +
+                    "Выберите хотя бы одну карту, а потом открывайте её в редакторе.");
             return "";
         } else {
             int row = table.getSelectedRow();

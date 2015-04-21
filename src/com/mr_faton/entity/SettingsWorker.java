@@ -1,6 +1,5 @@
 package com.mr_faton.entity;
 
-import com.mr_faton.Satements.Variables;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
@@ -31,18 +30,7 @@ public final class SettingsWorker {
 
     //приватный конструктор нашего класса, т.к. он синглетон
     private SettingsWorker() {
-        settingsFile = new File("C:\\GcstMapDownloader\\Settings.xml");
-//        try {
-//            settingsFile = new File(SettingsWorker.class
-//                    .getProtectionDomain()
-//                    .getCodeSource()
-//                    .getLocation()
-//                    .toURI()
-//                    .getPath() + "\\Settings.xml");
-//        } catch (URISyntaxException e) {
-//            e.printStackTrace();
-//        }
-
+        settingsFile = new File(System.getProperty("user.dir") + "\\Settings.xml");
         try {
             documentBuilderFactory = DocumentBuilderFactory.newInstance();
             documentBuilder = documentBuilderFactory.newDocumentBuilder();
@@ -96,14 +84,14 @@ public final class SettingsWorker {
     }
 
     //получить путь к редактору карт
-    public String getCardEditorPath() {
-        Node cardEditorNode = document.getElementsByTagName("card_editor").item(0);
+    public String getMapEditorPath() {
+        Node cardEditorNode = document.getElementsByTagName("map_editor").item(0);
         return cardEditorNode.getTextContent();
     }
 
     //установить путь для редактора карт
-    public void setCardEditorPath(String path) {
-        Node cardEditorNode = document.getElementsByTagName("card_editor").item(0).getFirstChild();
+    public void setMapEditorPath(String path) {
+        Node cardEditorNode = document.getElementsByTagName("map_editor").item(0).getFirstChild();
         cardEditorNode.setNodeValue(path);
 
         //можно было устанавлитвать значение и таким образом
@@ -111,6 +99,12 @@ public final class SettingsWorker {
 //        cardEditorNode.setTextContent(path);
 
         saveSettings(document);
+    }
+
+    //получить папку с кешем
+    public String getCacheDir() {
+        Node cacheDirNode = document.getElementsByTagName("cache_dir").item(0);
+        return cacheDirNode.getTextContent();
     }
 
     //получить все имена и заголовки карт
@@ -186,11 +180,11 @@ public final class SettingsWorker {
         Element program_settings = doc.createElement("program_settings");
         Element authorization = doc.createElement("authorization");
 
-        Element login = doc.createElement(Variables.LOGIN_STR);
+        Element login = doc.createElement("login");
         Text loginText = doc.createTextNode("логин");
         login.appendChild(loginText);
 
-        Element password = doc.createElement(Variables.PASSWORD_STR);
+        Element password = doc.createElement("password");
         Text passwordText = doc.createTextNode("пароль");
         password.appendChild(passwordText);
 
@@ -199,11 +193,16 @@ public final class SettingsWorker {
 
         Element system = doc.createElement("system");
 
-        Element card_editor = doc.createElement("card_editor");
-        Text card_editorText = doc.createTextNode("путь к редактору карт");
-        card_editor.appendChild(card_editorText);
+        Element map_editor = doc.createElement("map_editor");
+        Text map_editorText = doc.createTextNode("путь к редактору карт");
+        map_editor.appendChild(map_editorText);
 
-        system.appendChild(card_editor);
+        Element cache_dir = doc.createElement("cache_dir");
+        Text cache_dirText = doc.createTextNode("cache");
+        cache_dir.appendChild(cache_dirText);
+
+        system.appendChild(map_editor);
+        system.appendChild(cache_dir);
 
         program_settings.appendChild(authorization);
         program_settings.appendChild(system);
@@ -254,9 +253,9 @@ class SettingsWorker_Test {
 //        map.put("password", "9NCzR##?3z");
 //        settingsWorker.setLoginAndPass(map);
 
-//        System.out.println(settingsWorker.getCardEditorPath());
+//        System.out.println(settingsWorker.getMapEditorPath());
 
-//        settingsWorker.setCardEditorPath("C:\\test.exe");
+//        settingsWorker.setMapEditorPath("C:\\test.exe");
 //
 
 //        System.out.println(settingsWorker.getAllPatterns());

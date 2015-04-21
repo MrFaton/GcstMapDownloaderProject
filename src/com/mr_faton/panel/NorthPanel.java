@@ -1,7 +1,7 @@
 package com.mr_faton.panel;
 
-import com.mr_faton.StartProgram;
 import com.mr_faton.entity.SettingsWorker;
+import com.mr_faton.entity.WarningMessenger;
 import com.mr_faton.handler.SearchButtonHandler;
 
 import javax.swing.*;
@@ -53,7 +53,7 @@ public final class NorthPanel {
 
         //создаём выпадающий список с вариантами глубины поиска
         deepSearch = new String[]{
-                "1 сутки", "2 суток", "3 суток"
+                "1 сутки", "2 суток", "5 суток", "10 суток", "20 суток", "1 месяц", "2 месяца"
         };
         searchDeepCombo = new JComboBox<>();
         for (String elem : deepSearch) {
@@ -88,10 +88,10 @@ public final class NorthPanel {
                     if (foundMaps.length > 0) {
                         CenterPanel.getInstance().addRowsInTable(foundMaps);
                     } else {
-                        JOptionPane.showMessageDialog(StartProgram.mainFrame,
+                        new WarningMessenger("Поиск",
                                 "По вашему запросу не найдено ни одной карты...\n" +
-                                        "Введите новый запрос или лучше выберите карту из списка",
-                                "Поиск", JOptionPane.INFORMATION_MESSAGE);
+                                        "Введите новый запрос или лучше выберите карту из уже имеющегося списка"
+                        );
                     }
                 }
             }
