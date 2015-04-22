@@ -23,17 +23,21 @@ import java.util.Map;
  */
 public final class SettingsWorker {
     private File settingsFile;//файл с настройками
-    DocumentBuilderFactory documentBuilderFactory;
-    DocumentBuilder documentBuilder;
-    Document document;//наш xml документ
+    DocumentBuilderFactory documentBuilderFactory;//фабрика документов
+    DocumentBuilder documentBuilder;//построитель документов
+    Document document;//наш xml документ настроек
     private static SettingsWorker settingsWorker = null;//наш класс - обработчик xml должен быть синглетоном
 
     //приватный конструктор нашего класса, т.к. он синглетон
     private SettingsWorker() {
+        //получаем наш файл настроек
         settingsFile = new File(System.getProperty("user.dir") + "\\Settings.xml");
         try {
+            //строим фабрику документов
             documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            //строим постироитель документов
             documentBuilder = documentBuilderFactory.newDocumentBuilder();
+            //проверяем существует ли файл настроек (Settings.xml)
             if (settingsFile.exists()) {
                 //если файл существует, парсим из него данные
                 document = documentBuilder.parse(settingsFile);
@@ -67,6 +71,7 @@ public final class SettingsWorker {
         mapAuthorize.put("login", login);
         mapAuthorize.put("password", password);
         return mapAuthorize;
+        //возвращается мапа, у которой по ключу "login" лежит логин и так же с паролем
     }
 
     //установить логин и пароль
@@ -241,6 +246,14 @@ public final class SettingsWorker {
         }
     }
 }
+/*
+Объект этого класса - синглетон. Это как бы API для работы с XML-файлом, содержащим себе все настройки программы и
+шаблоны поиска карт. Т.к. этот объект синглетон, то при первом конструировании этого объекта, он парсит все настройки и
+шаблоны из файла настроек и содержт их в одном документе "document", поэтому если разные части программы вностят в этот
+документ разные коррективы (меняют разные настройки), то другие части программы сразу видят эти изменения. Исключение
+составляет лишь выбадающий список шаблонов карт, который формируется единожды при старте программмы, поэтому при
+изменении списка шаблона карт, для того, чтобы они отображались в выпадающем списке - программу необходимо перезагрузить.
+ */
 
 class SettingsWorker_Test {
     public static void main(String[] args) {
@@ -265,8 +278,7 @@ class SettingsWorker_Test {
 //        map.put("Nmae2", "Header2");
 //        settingsWorker.setPatterns(map);
     }
-
-    /*
-    Тестирующий класс. Зпускать тольок по группам строк
-     */
 }
+/*
+    Тестирующий класс. Зпускать только по группам строк
+     */

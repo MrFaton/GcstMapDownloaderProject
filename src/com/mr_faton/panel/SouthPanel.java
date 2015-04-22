@@ -33,7 +33,6 @@ public final class SouthPanel {
                     OpenButtonHandler openButtonHandler = new OpenButtonHandler();
                     openButtonHandler.openMapInEditor(selectedMapHeader);
                 }
-
             }
         });
 

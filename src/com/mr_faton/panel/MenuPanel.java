@@ -25,7 +25,7 @@ public final class MenuPanel {
         JMenu options = new JMenu("Настройки");
         JMenu help = new JMenu("Помощь");
 
-        final JMenuItem programSettings = new JMenuItem("Настройки программы");
+        JMenuItem programSettings = new JMenuItem("Настройки программы");
         JMenuItem patternSettings = new JMenuItem("Настройки шаблонов");
 
         programSettings.addActionListener(new ActionListener() {
@@ -60,7 +60,6 @@ public final class MenuPanel {
                     aboutDialog = new AboutDialog();
                 }
                 aboutDialog.setVisible(true);
-                System.out.println("about menu clicked");
             }
         });
 

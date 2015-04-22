@@ -21,27 +21,36 @@ import java.util.regex.Pattern;
 public final class SearchButtonHandler {
     private String login;
     private String password;
-    public static List<GCSTMap> gcstMapList;
+    public static List<GCSTMap> gcstMapList;//список найденных карт-объектов
 
     public SearchButtonHandler() {
+        //получаем экземпляр работника с файлом настроек
         SettingsWorker settingsWorker = SettingsWorker.getInstance();
+        //получаем карту с логином и паролем
         Map<String, String> authorizeMap = settingsWorker.getLoginAndPass();
+        //извлекаем из карты логин и пароль
         login = authorizeMap.get("login");
         password = authorizeMap.get("password");
     }
 
+    /*
+    основной метод. Результат его работы - найденный список карт по запросу пользователя. Получает заголовок карты и
+     глубину поиска
+     */
     public String[][] getSearchResult(String mapHeader, String deepSearch) {
         URLConnection connection = null;
+        //ответ от сервера с результатми поиска по запросу будет сохранён в этой переменной
         StringBuilder page = new StringBuilder();
 
         try {
+            //настраиваем соединение
             connection = new URL(Variables.MAP_URL).openConnection();
             connection.setConnectTimeout(1 * 60 * 1000);
             connection.setReadTimeout(1 * 60 * 1000);
             connection.setDoOutput(true);
             connection.setRequestProperty("Authorization", getAuthorizeKey());
 
-            //сформировать POST запрос
+            //сформировать POST запрос (параметры запроса берутся из сайта гцст)
             Map<String, String> postParameters = new LinkedHashMap<>();
             postParameters.put("find", mapHeader);
             postParameters.put("Header", "");
@@ -69,8 +78,14 @@ public final class SearchButtonHandler {
                 }
             }
 
+            //передаём страницу с результатми методу-парсеру инфы о картых, а назад получаем список карт-обхектов
             List<GCSTMap> gcstMapList = findMaps(page.toString());
+            /*
+            передаём список карт-объектов, а назад получаем двухмерный массив. Внутренний массив содержит информацию
+            которая затем выведется на экран как результаты поиска, а именно это: имя карты, её заголовк и термин
+             */
             String[][] convertedMapList = getConvertedMapList(gcstMapList);
+            //вовзращаем строки для таблицы, содержащие имя карты, её заголовк и термин
             return convertedMapList;
         } catch (IOException outerEx) {
             HttpURLConnection httpURLConnection = (HttpURLConnection) connection;
@@ -101,12 +116,17 @@ public final class SearchButtonHandler {
         }
     }
 
+    //возвращает логин и пароль в виде закодированной по Base64 кодировки строки
     private String getAuthorizeKey() {
         String authorization = login + ":" + password;
         authorization = Base64.getEncoder().encodeToString(authorization.getBytes());
         return "Basic " + authorization;
     }
 
+    /*
+    парсит всю информацию о каждой карте и сохраняет её в один объект типа GCSTMap, а объект в список таких объектов.
+    Параметр - ответ от сервера с результатми поисков
+     */
     private List<GCSTMap> findMaps(String htmlPage) {
         gcstMapList = new LinkedList<>();
         String downloadLink = "";
@@ -142,11 +162,29 @@ public final class SearchButtonHandler {
         return gcstMapList;
     }
 
+    //преобразовывает список карт-объектов в двухмерный массив, который содержит только 3 колонки
     private String[][] getConvertedMapList(List<GCSTMap> mapList) {
-        Collections.reverse(mapList);//для того чтобы данные выводились в обратном порядке
+        //для того чтобы данные выводились в обратном порядке (от саой давней карты, до самой новой)
+        Collections.reverse(mapList);
+        /*
+        парметры для таблицы, которая будет сформирована на остнове полученных результатов поиска
+
+        т.к. у нас в будущей таблице только 3 колонки (имя карты, заголовок и термин), т.е. это кол-во ячеек
+        во внутреннем массиве, т.е. внутренний масси состоит из 3-х ячеек
+         */
         int columnCount = 3;
-        int rowCount = mapList.size();//т.к. у нас в таблице только 3 колонки
+        /*
+        кол-во строк будущей таблице. Оно равно колличеству найденных поиском и собранных парсером карт. т.е. это
+        кол-во ячеек внешнего массива. т.е. в одну это ячейку помещается массив, содержащий
+        (имя карты, заголовок и термин)
+         */
+        int rowCount = mapList.size();
+        //создаём двухмерный массив
         String[][] convertedMaps = new String[rowCount][columnCount];
+        /*
+        проходимся по списку карт-объектов и помещаем необходимые нам поля в двухмерный массив (из него будет состоять
+        таблица с результатми на главном окне)
+         */
         int i = 0;
         for (GCSTMap gcstMap : mapList) {
             convertedMaps[i][0] = gcstMap.getName();
@@ -154,6 +192,7 @@ public final class SearchButtonHandler {
             convertedMaps[i][2] = gcstMap.getTerm();
             i++;
         }
+        //возвращаем двухмерный массив
         return convertedMaps;
     }
 }

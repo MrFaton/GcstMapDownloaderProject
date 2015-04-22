@@ -13,3 +13,7 @@ public final class ErrorMessenger {
         JOptionPane.showMessageDialog(StartProgram.mainFrame, message, "Ошибка!", JOptionPane.ERROR_MESSAGE);
     }
 }
+/*
+Объект этого класса просто выводит пользователю стандартное сообщение об возникшей ошибке. Для этого ему в конструктор
+нужно передать сообщение, содержащее информацию об ошибке
+ */

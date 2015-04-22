@@ -12,3 +12,7 @@ public class WarningMessenger {
         JOptionPane.showMessageDialog(StartProgram.mainFrame, message, title, JOptionPane.WARNING_MESSAGE);
     }
 }
+/*
+Объект этого класса просто выводит пользователю стандартное сообщение-предупреждение. Для этого ему в конструктор
+нужно передать заглавие и сообщение
+ */

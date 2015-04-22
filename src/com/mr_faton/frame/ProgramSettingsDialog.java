@@ -16,17 +16,20 @@ import java.util.Map;
 public class ProgramSettingsDialog extends JDialog {
     private static int WIDTH = 340;
     private static int HEIGHT = 320;
-    private SettingsWorker settingsWorker;
+    private SettingsWorker settingsWorker;//обработчик xml-файла с настройками
 
     public ProgramSettingsDialog() {
         super(StartProgram.mainFrame, "Настройки программы", true);
         settingsWorker = SettingsWorker.getInstance();
+        //получить мапу с логином и паролем из Xml файла (ключ: login, значение: логин)
         final Map<String, String> authMap = settingsWorker.getLoginAndPass();
 
+        //создаём основную панель, в неё будут вложены другие панели
         JPanel mainPanel = new JPanel(new GridLayout(2, 0, 0, 10));
 
         //панель авторизационных данных
         JPanel authorizePanel = new JPanel(new GridLayout(4, 0));
+        //установить рамку вокруг панели
         authorizePanel.setBorder(BorderFactory.createTitledBorder("Авторизационные данные"));
         final JLabel loginLabel = new JLabel("Логин:");
         final JTextField loginField = new JTextField(authMap.get("login"));
@@ -46,6 +49,7 @@ public class ProgramSettingsDialog extends JDialog {
         JLabel cacheDirLabel = new JLabel("Папка для временного хранения карт:");
         JTextField cacheDirField = new JTextField(settingsWorker.getCacheDir());
         cacheDirField.setEditable(false);
+        //добавить элементы на системную панель
         systemPanel.add(mapEditorLabel);
         systemPanel.add(mapEditorField);
         systemPanel.add(cacheDirLabel);
@@ -89,15 +93,22 @@ public class ProgramSettingsDialog extends JDialog {
                 setVisible(false);
             }
         });
+        //добавить кнопки на панель кнопок
         buttonsPanel.add(saveButton);
         buttonsPanel.add(cancelButton);
 
+        /*
+        добавить на основную панель панель авторизации и панель кнопок (панель в панель для того, чтобы были рамки
+        вокруг панели авторизации и системной панели)
+         */
         mainPanel.add(authorizePanel);
         mainPanel.add(systemPanel);
 
+        //добавить центральную панель и панель с кнопками во фрейм
         add(mainPanel, BorderLayout.CENTER);
         add(buttonsPanel, BorderLayout.SOUTH);
 
+        //та же история чтобы вывести фрейм по центру экрана
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension monitorScreenSize = toolkit.getScreenSize();
         int monitorWidth = monitorScreenSize.width;
@@ -115,3 +126,8 @@ public class ProgramSettingsDialog extends JDialog {
         );
     }
 }
+/*
+Объект дочернего фрейма-диалога, который реагирует на вызов "Настройки -* Настройки программы"
+В этом диалоговом фрейме происходит настройка программы, а именно указывается: логин, пароль, путь к редактору карт и
+отображается папка для кеша
+ */
