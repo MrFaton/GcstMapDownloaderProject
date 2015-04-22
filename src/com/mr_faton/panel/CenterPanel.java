@@ -26,7 +26,6 @@ public final class CenterPanel {
     нужно знать какую строку выделил пользователь и для того, чтобы не создавать новый экземпляр этой панлеи мы
     вернём по запросу уже созданный ранее экземпляр и там можно будет вызвать метод, возвращающий необходимые
     данные. По такому принципу реализованы все панели))
-
      */
     public static synchronized CenterPanel getInstance() {
         if (centerPanel == null) {
@@ -36,19 +35,24 @@ public final class CenterPanel {
     }
 
     public CenterPanel() {
+        //инициализируем массив с название колонок
         columnNames = new String[]{"Название", "Заголовок", "Срок"};
+        //создаём модель таблицы без строк и с тремя колонками
         model = new MyTableModel(0, columnNames.length);
+        //устанавливаем назавание колонок
         model.setColumnIdentifiers(columnNames);
 
-
+        //создаём таблицу из модели
         table = new JTable(model);
-
+        //создаём автосортировщик
         table.setAutoCreateRowSorter(true);
+        //устанавливаем цвет фона
         table.setBackground(Color.white);
+        //накладываем ограничение на выделение только одной строки
         table.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
+        //пристоединяем к таблице скроллек
         JScrollPane scrollPane = new JScrollPane(table);
-
+        //добавляем к таблице слушателя мыши, для того чтобы открыть карту для пользователя по двойному щелчку
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent event) {
@@ -62,23 +66,31 @@ public final class CenterPanel {
             }
         });
 
+        //создаём новую панель
         panel = new JPanel();
+        //устанавливаем в ней тип компоновки элементов (таблица будет растянута на всю область)
         panel.setLayout(new BorderLayout());
+        //установить рамочку вокруг панели
         panel.setBorder(BorderFactory.createTitledBorder("Результаты поиска:"));
+        //добавить на панель таблицу в виде скроллера
         panel.add(scrollPane);
     }
 
+    //добавляет строки из двухмерного массива в таблицу
     public void addRowsInTable(String[][] data) {
-        model.setRowCount(0);//очистить таблицу
+        //очистить таблицу
+        model.setRowCount(0);
         for (String[] base : data) {
             model.addRow(base);
         }
     }
 
+    //возвращает объект панели
     public JPanel getPanel() {
         return panel;
     }
 
+    //возвращает заголовок карты в выделенной строке
     public String getSelectedMap() {
         if (table.getSelectedRow() < 0) {
             new WarningMessenger("Внимание!", "Вы не выбрали ни одной карты!\n" +
