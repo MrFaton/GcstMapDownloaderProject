@@ -82,8 +82,8 @@ public class ProgramSettingsDialog extends JDialog {
                 authMap.put("password", passwordStr);
                 settingsWorker.setLoginAndPass(authMap);
                 settingsWorker.setMapEditorPath(mapEditorStr);
-
-                setVisible(false);
+                //сохранить настройки в xml-файл, true - чтобы показать сообщение об успешном сохранении
+                settingsWorker.saveSettings(true);
             }
         });
         JButton cancelButton = new JButton("Отмена");

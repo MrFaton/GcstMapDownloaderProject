@@ -106,14 +106,16 @@ public final class MapPatternsDialog extends JDialog {
                     allPatternsMap.put(mapName, mapHeader);
                 }
                 //передаём нашему обработчику xml-файла с настройками мапу шаблонов для сохранения в xml
-                SettingsWorker.getInstance().setPatterns(allPatternsMap);
+                settingsWorker.setPatterns(allPatternsMap);
+                //сохранить настройки в xml-файл, true - чтобы показать сообщение об успешном сохранении
+                settingsWorker.saveSettings(true);
             }
 
             //конструирует объект с предупреждающим сообщением (если есть пустая ячейка)
             private void showMessage(int row, String columnName) {
                 new WarningMessenger("Пустая ячейка!",
                         "Не не не, мы не будем сохранять данные,\n" +
-                                "когда ячейка в строке \"" + row + "\" и столбце \"" + columnName + "\" пустая.\n" +
+                                "когда ячейка в строке № \"" + row + "\" и столбце \"" + columnName + "\" пустая.\n" +
                                 "Вернитесь к таблице и заполните пустую ячейку!"
                 );
             }
