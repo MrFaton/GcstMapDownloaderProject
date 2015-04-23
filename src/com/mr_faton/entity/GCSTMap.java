@@ -5,7 +5,7 @@ import java.util.Objects;
 /**
  * Created by root on 17.04.2015.
  */
-public class GCSTMap {
+public final class GCSTMap {
     private String downloadLink;//часть ссылки на скачивание карты
     private String name;//имя карты
     private String header;//заголовок карты

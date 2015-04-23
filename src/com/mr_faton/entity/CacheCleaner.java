@@ -5,7 +5,7 @@ import java.io.File;
 /**
  * Created by root on 21.04.2015.
  */
-public class CacheCleaner {
+public final class CacheCleaner {
     //папка кэша
     private File cacheDir;
 

@@ -8,7 +8,7 @@ import java.awt.*;
 /**
  * Created by root on 21.04.2015.
  */
-public class AboutDialog extends JDialog {
+public final class AboutDialog extends JDialog {
     private static int WIDTH = 465;
     private static int HEIGHT = 220;
 

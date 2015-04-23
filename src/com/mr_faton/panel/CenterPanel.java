@@ -107,7 +107,7 @@ public final class CenterPanel {
 на панель и добавляется в центральную часть главного фрейма
  */
 
-class MyTableModel extends DefaultTableModel {
+final class MyTableModel extends DefaultTableModel {
     MyTableModel(int rowCount, int columnCount) {
         super(rowCount, columnCount);
     }

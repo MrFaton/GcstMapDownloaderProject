@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * Created by root on 21.04.2015.
  */
-public class ProgramSettingsDialog extends JDialog {
+public final class ProgramSettingsDialog extends JDialog {
     private static int WIDTH = 340;
     private static int HEIGHT = 320;
     private SettingsWorker settingsWorker;//обработчик xml-файла с настройками
