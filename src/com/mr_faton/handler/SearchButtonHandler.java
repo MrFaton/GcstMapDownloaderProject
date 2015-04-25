@@ -105,7 +105,7 @@ public final class SearchButtonHandler {
                     }
                 }
             } else {
-                new ErrorMessenger("Возникла неопределённая ошибка.\n" +
+                new ErrorMessenger("Обнаружена критическая ошибка.\n" +
                         "Программа будет завершена...");
                 StartProgram.mainFrame.dispose();
                 System.exit(-1);

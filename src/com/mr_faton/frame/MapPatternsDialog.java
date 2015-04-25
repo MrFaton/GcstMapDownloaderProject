@@ -73,7 +73,12 @@ public final class MapPatternsDialog extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 //удалить выделенную строку из таблицы
                 int row = table.getSelectedRow();
-                tableModel.removeRow(row);
+                if (row >= 0) {
+                    tableModel.removeRow(row);
+                } else {
+                    new WarningMessenger("Строка не выбрана!", "Строка для удаления не выбрана!\n" +
+                            "Пожалуйста выберите строку, а потом удаляйте!");
+                }
             }
         });
 
