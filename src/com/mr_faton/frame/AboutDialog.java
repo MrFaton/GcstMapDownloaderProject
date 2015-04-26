@@ -25,7 +25,7 @@ public final class AboutDialog extends JDialog {
                 "<hr>\n" +
                 "<ul>\n" +
                 "\t<li><font size=\"4\">Автор: Понарин Игорь Сергеевич</font></li>\n" +
-                "\t<li><font size=\"4\">Версия: 1.0</font></li>\n" +
+                "\t<li><font size=\"4\">Версия: 1.1</font></li>\n" +
                 "</ul>\n" +
                 "<p><font size=\"3\">По всем вопросам обращайтесь по электронному адресу: <font color=\"#0000FF\">firefly90@inbox.ru</font></font></p>\n" +
                 "<p align=\"right\">&nbsp;</p>\n" +

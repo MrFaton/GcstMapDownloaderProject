@@ -50,6 +50,8 @@ public final class CenterPanel {
         table.setBackground(Color.white);
         //накладываем ограничение на выделение только одной строки
         table.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        //устанавливаем жирный шрифт 14-того размера
+        table.setFont(new Font("default", Font.BOLD, 14));
         //пристоединяем к таблице скроллек
         JScrollPane scrollPane = new JScrollPane(table);
         //добавляем к таблице слушателя мыши, для того чтобы открыть карту для пользователя по двойному щелчку

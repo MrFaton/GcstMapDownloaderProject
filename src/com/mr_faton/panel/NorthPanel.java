@@ -54,6 +54,17 @@ public final class NorthPanel {
         }
         //разрешаем редактировать выпадющий список (если пользователю нужно найти карту которой нет в списке)
         mapNameCombo.setEditable(true);
+        /*
+        добавляем слушателя для того, чтобы как только пользователь выбрал карту из выпадающегося списка,
+        она сразу же искалась без нажатия кнопки "Искать"
+         */
+        mapNameCombo.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //начать поиск карты
+                beginSearch();
+            }
+        });
 
         //создаём выпадающий список с вариантами глубины поиска
         deepSearch = new String[]{
@@ -71,58 +82,8 @@ public final class NorthPanel {
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //получаем имя выбранной карты из выпадающего списка
-                String mapName = getSelectedMapName();
-                //заголовок карты (по нему мы ищем карту)
-                String mapHeader;
-                /*
-                если мапа со списком шаблонов поиска карт (Микрокольцовка:QYUA98), содержит название карты полученной
-                 из выпадающего списка
-                 */
-                if (allPatternsMap.containsKey(mapName)) {
-                    //тогда по этому имени получаем заголовок карты
-                    mapHeader = allPatternsMap.get(mapName);
-                } else {
-                    /*
-                    если мапа не содержит такого ключа, значит пользователь ввёл уникальный заголовок карты - мы будем
-                    искать его
-                     */
-                    mapHeader = mapName;
-                }
-
-                //получаем выбранную из выпадающего списка глубину поиска
-                String deepSearchStr = getSelectedDeepSearch();
-                //делим полученный результат на 2 токена: "1" и "сутки/месяц"
-                String[] deepSearchParameters = deepSearchStr.split(" ");
-                //получае значение первого токена (это всегда число)
-                int deepSearch = Integer.valueOf(deepSearchParameters[0]);
-                //получаем значение второго токена (это всегда строка (сутки или месяц))
-                String conditionSearch = deepSearchParameters[1];
-                //если второй токен начинается с "мес", значи выбранная глубина поиска исчисляется в месяцах (2 месяца)
-                if (conditionSearch.startsWith("мес")) {
-                    //тогда мы первый токен умножаем на 30 дней (2 месяца = 2*3 = 60 дней)
-                    deepSearch = deepSearch * 30;
-                }
-                //преобразовываем глубину поиска из числа в строку
-                deepSearchStr = deepSearch + "";
-                //создаём новый экземпляр обработчика кнопки "Искать"
-                SearchButtonHandler searchButtonHandler = new SearchButtonHandler();
-                //передаём методу заголовок карты и глубину поиска и получаем двухмерный массив с найденными результатми
-                String[][] foundMaps = searchButtonHandler.getSearchResult(mapHeader, deepSearchStr);
-                //если вернувшийся массив существует
-                if (foundMaps != null) {
-                    //если вернувшийся массив не пустой
-                    if (foundMaps.length > 0) {
-                        //вывести в центральную таблицу найденные карты
-                        CenterPanel.getInstance().addRowsInTable(foundMaps);
-                    } else {
-                        //иначе вывести сообщение о том, что поиск не дал результатов
-                        new WarningMessenger("Поиск",
-                                "По вашему запросу не найдено ни одной карты...\n" +
-                                        "Введите новый запрос или лучше выберите карту из уже имеющегося списка."
-                        );
-                    }
-                }
+                //начать поиск карты
+                beginSearch();
             }
         });
 
@@ -148,5 +109,61 @@ public final class NorthPanel {
     //вернуть выбранное в выпадающем списке глубину поиска
     public String getSelectedDeepSearch() {
         return (String) searchDeepCombo.getSelectedItem();
+    }
+
+    //наш поиск карты
+    private void beginSearch() {
+        //получаем имя выбранной карты из выпадающего списка
+        String mapName = getSelectedMapName();
+        //заголовок карты (по нему мы ищем карту)
+        String mapHeader;
+                /*
+                если мапа со списком шаблонов поиска карт (Микрокольцовка:QYUA98), содержит название карты полученной
+                 из выпадающего списка
+                 */
+        if (allPatternsMap.containsKey(mapName)) {
+            //тогда по этому имени получаем заголовок карты
+            mapHeader = allPatternsMap.get(mapName);
+        } else {
+                    /*
+                    если мапа не содержит такого ключа, значит пользователь ввёл уникальный заголовок карты - мы будем
+                    искать его
+                     */
+            mapHeader = mapName;
+        }
+
+        //получаем выбранную из выпадающего списка глубину поиска
+        String deepSearchStr = getSelectedDeepSearch();
+        //делим полученный результат на 2 токена: "1" и "сутки/месяц"
+        String[] deepSearchParameters = deepSearchStr.split(" ");
+        //получае значение первого токена (это всегда число)
+        int deepSearch = Integer.valueOf(deepSearchParameters[0]);
+        //получаем значение второго токена (это всегда строка (сутки или месяц))
+        String conditionSearch = deepSearchParameters[1];
+        //если второй токен начинается с "мес", значи выбранная глубина поиска исчисляется в месяцах (2 месяца)
+        if (conditionSearch.startsWith("мес")) {
+            //тогда мы первый токен умножаем на 30 дней (2 месяца = 2*3 = 60 дней)
+            deepSearch = deepSearch * 30;
+        }
+        //преобразовываем глубину поиска из числа в строку
+        deepSearchStr = deepSearch + "";
+        //создаём новый экземпляр обработчика кнопки "Искать"
+        SearchButtonHandler searchButtonHandler = new SearchButtonHandler();
+        //передаём методу заголовок карты и глубину поиска и получаем двухмерный массив с найденными результатми
+        String[][] foundMaps = searchButtonHandler.getSearchResult(mapHeader, deepSearchStr);
+        //если вернувшийся массив существует
+        if (foundMaps != null) {
+            //если вернувшийся массив не пустой
+            if (foundMaps.length > 0) {
+                //вывести в центральную таблицу найденные карты
+                CenterPanel.getInstance().addRowsInTable(foundMaps);
+            } else {
+                //иначе вывести сообщение о том, что поиск не дал результатов
+                new WarningMessenger("Поиск",
+                        "По вашему запросу не найдено ни одной карты...\n" +
+                                "Введите новый запрос или лучше выберите карту из уже имеющегося списка."
+                );
+            }
+        }
     }
 }
