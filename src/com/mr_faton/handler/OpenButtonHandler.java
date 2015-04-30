@@ -1,6 +1,7 @@
 package com.mr_faton.handler;
 
 import com.mr_faton.Satements.Variables;
+import com.mr_faton.entity.ErrorMessenger;
 import com.mr_faton.entity.GCSTMap;
 import com.mr_faton.entity.SettingsWorker;
 
@@ -77,6 +78,7 @@ public final class OpenButtonHandler {
             //стартуем карт этодор и передаём ему параметром нашу скачаную и переконвертированную карту
             new ProcessBuilder(mapEditorPath, outputImageFile.getAbsolutePath()).start();
         } catch (IOException e) {
+            new ErrorMessenger("Вы указали неверный путь к программе редактору карт:\n" + e.getMessage());
             e.printStackTrace();
         }
     }
