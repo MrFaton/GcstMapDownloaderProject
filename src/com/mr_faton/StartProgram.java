@@ -13,6 +13,7 @@ public final class StartProgram {
     public static JFrame mainFrame;
 
     public static void main(String[] args) {
+        System.out.println();
         /*
         создаём основное окно программы. Его нужно создать именно здесь, а не во внутреннем классе "Program", т.к.
         все дочерние фреймы-диалоги должны иметь фрейма-родителя - это наш "mainFrame", но другие классы не могут
