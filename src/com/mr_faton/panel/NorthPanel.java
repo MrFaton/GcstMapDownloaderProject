@@ -45,6 +45,8 @@ public final class NorthPanel {
 
         //создаём выпадающий список с заголовками карт
         mapNameCombo = new JComboBox<>();
+        //максимальное кол-во строк в выпадающем списке
+        mapNameCombo.setMaximumRowCount(14);
 
         //получаем мапу шаблонов карты из настроек и добавляе в выпадающий список имена карт
         SettingsWorker settingsWorker = SettingsWorker.getInstance();
